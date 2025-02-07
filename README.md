@@ -85,17 +85,17 @@ export interface IOrderResult {
 
 Конструктор
 - `constructor(baseUrl: string, options: RequestInit = {})`
-  - `baseUrl` • Базовый URL для API.
-  - `options` • Опции для запросов, включая заголовки. По умолчанию устанавливается заголовок `Content-Type` как `application/json`.
+- `baseUrl` • Базовый URL для API.
+- `options` • Опции для запросов, включая заголовки. По умолчанию устанавливается заголовок `Content-Type` как `application/json`.
 
 Методы
 - `protected handleResponse(response: Response): Promise<object>`
-  - • Обрабатывает ответ от сервера. 
-  - • Возвращает JSON, если ответ успешный. 
-  - • Отклоняет промис с ошибкой, если ответ не успешный.
+-  Обрабатывает ответ от сервера. 
+-  Возвращает JSON, если ответ успешный. 
+-  Отклоняет промис с ошибкой, если ответ не успешный.
 
 - `get(uri: string)`
   - • Выполняет `GET`-запрос к указанному `uri`.
 
 - `post(uri: string, data: object, method: ApiPostMethods = 'POST')`
-  - • Выполняет `POST`-запрос (или другой метод, указанный в `method`) к указанному `uri` с переданными `data`.
+  -  Выполняет `POST`-запрос (или другой метод, указанный в `method`) к указанному `uri` с переданными `data`.
