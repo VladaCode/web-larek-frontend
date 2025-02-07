@@ -18,35 +18,26 @@
 ## Установка и запуск
 Для установки и запуска проекта необходимо выполнить команды
 
-```
 npm install
 npm run start
-```
 
 или
 
-```
 yarn
 yarn start
-```
 ## Сборка
 
-```
 npm run build
-```
 
 или
 
-```
 yarn build
-```
 
 # Описание данных
 
 ## Интерфейсы
 
 ### IProductItem
-```typescript
 interface IProductItem {
     id: string;
     title: string;
@@ -55,11 +46,9 @@ interface IProductItem {
     image: string;
     price: number | null;
 }
-```
 Используется для описания товара в магазине. Содержит основные характеристики товара: идентификатор, название, описание, категорию, изображение и цену.
 
 ### IOrderForm
-```typescript
 interface IOrderForm {
     name?: string;
     email?: string;
@@ -67,14 +56,42 @@ interface IOrderForm {
     address?: string;
     total?: string | number;
 }
-```
 Используется для хранения данных формы заказа. Включает контактные данные покупателя и общую стоимость.
 
 ### IOrder
-```typescript
 interface IOrder extends IOrderForm {
     items: string[];
 }
-```
 Расширяет IOrderForm, добавляя массив идентификаторов товаров в заказе.
 
+### RequiredOrder
+type RequiredOrder = Required<IOrder>;
+Расширяет IOrder и делает все его свойства обязательными.
+
+### IOrderResult
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
+Описывает результат заказа
+
+
+## Базовые классы
+
+### Класс Api
+
+Класс Api предназначен для упрощения работы с HTTP-запросами. Он предоставляет методы для выполнения стандартных HTTP-запросов (GET и POST) и обработки ответов.
+
+
+Конструктор
+    - constructor(baseUrl: string, options: RequestInit = {})
+    - baseUrl: Базовый URL для API.
+    - options: Опции для запросов, включая заголовки. По умолчанию устанавливается заголовок Content-Type как application/json.
+
+Методы
+    - protected handleResponse(response: Response): Promise<object>
+        Обрабатывает ответ от сервера. Возвращает JSON, если ответ успешный, или отклоняет промис с ошибкой, если ответ не успешный.
+    - get(uri: string)
+        Выполняет GET-запрос к указанному URI.
+    - post(uri: string, data: object, method: ApiPostMethods = 'POST')
+        Выполняет POST-запрос (или другой метод, указанный в method) к указанному URI с переданными данными.
