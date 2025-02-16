@@ -46,22 +46,6 @@ yarn build
 
 # Интерфейсы и типы
 
-### type ApiGetMethods
-```
-type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' 
-```
-Определяем типы методов POST-запросов, которые могут использоваться в API
-
-### interface IApi
-Интерфейс для описания API-класса
-```
- interface IApi {
-  baseUrl: string;
-  get<T>(url: string): Promise<T>;
-  post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>;
-}
-```
-
 ### interface IProduct
 ```
 interface IProduct {
