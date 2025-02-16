@@ -1,7 +1,12 @@
-import { ApiPostMethods, IApi } from '../../types';
+export type ApiListResponse<Type> = {
+  total: number,
+  items: Type[]
+};
+
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 // Класс для работы с API
-export class Api implements IApi {
+export class Api {
   readonly baseUrl: string; // Базовый URL для API-запросов
   protected options: RequestInit; // Опции для настройки fetch-запросов
 

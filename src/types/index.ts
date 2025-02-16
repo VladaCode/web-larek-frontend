@@ -1,13 +1,3 @@
-// Определяем типы методов POST-запросов, которые могут использоваться в API
-export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
-
-// Интерфейс для описания API-класса
-export interface IApi {
-  baseUrl: string; // Базовый URL для API-запросов
-  get<T>(url: string): Promise<T>; // GET-запрос, возвращающий Promise с данными типа T
-  post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>; // POST-запрос, возвращающий Promise с данными типа T
-}
-
 
 // Интерфейс для описания товара
 export interface IProduct {
@@ -39,6 +29,12 @@ export interface IOrderForm {
     email: string;
     phone: string;
     address: string;
+}
+
+// Коллекция Заказ
+export interface IOrder extends IOrderForm {
+  items: string[]; // перечень карточек в корзине
+  total: number; // общая сумма заказа
 }
 
 // описывает ошибки формы заказа. Он использует утилиту Partial, чтобы сделать все поля необязательными, и утилиту Record, чтобы сопоставить ключи интерфейса IOrder со строками, представляющими ошибки
