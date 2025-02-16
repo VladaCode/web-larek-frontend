@@ -1,3 +1,14 @@
+// Определяем типы методов POST-запросов, которые могут использоваться в API
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+// Интерфейс для описания API-класса
+export interface IApi {
+  baseUrl: string; // Базовый URL для API-запросов
+  get<T>(url: string): Promise<T>; // GET-запрос, возвращающий Promise с данными типа T
+  post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>; // POST-запрос, возвращающий Promise с данными типа T
+}
+
+
 // Интерфейс для описания товара
 export interface IProduct {
     id: string;
@@ -16,6 +27,11 @@ export interface IProduct {
 // Тип содержащий данные товара используемые в корзине
 export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'image' | 'price'>;
 
+// Интерфейс для описания результата заказа, содержащего идентификатор заказа и общую сумму
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
 
 // Интерфейс для описания формы заказа
 export interface IOrderForm {
@@ -46,11 +62,6 @@ export interface IOderFormsData {
   cleaFormContacts(): void;
 }
 
-// Интерфейс для описания результата заказа, содержащего идентификатор заказа и общую сумму
-export interface IOrderResult {
-  id: string;
-  total: number;
-}
 
 //Интерфейс, описывающий коллекцию товаров в корзине
 export interface IProductBasketData {
