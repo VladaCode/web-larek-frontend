@@ -25,6 +25,8 @@ export class Modal extends Component<IModalData> {
         // Добавление обработчиков событий для закрытия модального окна
         this._closeButton.addEventListener('click', this.close.bind(this)); // Закрытие при клике на кнопку
         this.container.addEventListener('click', this.close.bind(this)); // Закрытие при клике на контейнер
+        this.handleEscUp = this.handleEscUp.bind(this); // Привязка метода handleEscUp к контексту текущего объекта
+
         this._content.addEventListener('click', (event) => event.stopPropagation()); // Предотвращение закрытия при клике на содержимое
     }
 
@@ -36,12 +38,14 @@ export class Modal extends Component<IModalData> {
     // Метод для открытия модального окна
     open() {
         this.container.classList.add('modal_active'); // Добавление класса для отображения модального окна
+        document.addEventListener('keyup', this.handleEscUp); // Добавление обработчика события keyup
         this.events.emit('modal:open'); // Эмитирование события об открытии модального окна
     }
 
     // Метод для закрытия модального окна
     close() {
         this.container.classList.remove('modal_active'); // Удаление класса для скрытия модального окна
+        document.removeEventListener('keyup', this.handleEscUp); // Удаление обработчика события keyup
         this.content = null; // Сброс содержимого модального окна
         this.events.emit('modal:close'); // Эмитирование события о закрытии модального окна
     }
@@ -53,6 +57,7 @@ export class Modal extends Component<IModalData> {
         this.close(); // Закрытие модального окна, если клавиша "Escape" была нажата
     }
 }
+
     // Метод для рендеринга модального окна
     render(data: IModalData): HTMLElement {
         super.render(data); // Вызов метода рендеринга родительского класса

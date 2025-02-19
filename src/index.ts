@@ -38,7 +38,7 @@ const orderForms = new OrderForms({}, events);
 const mainpage = new MainPage(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new BasketView(cloneTemplate(basketviewTemplate), events);
-const deliverypayment  = new OrderFormAddressView(cloneTemplate(delpayviewTemplate), events);
+const addresspayment  = new OrderFormAddressView(cloneTemplate(delpayviewTemplate), events);
 const contacts = new OrderFormContactsView(cloneTemplate(contactsviewTemplate), events);
 const successView = new Success(cloneTemplate(success), events);
 
@@ -114,14 +114,14 @@ events.on('basket: removecard', (item: TProductBasket) => {
 
 // Обработчик события отправки корзины
 events.on('basket: submit', () => {
-    events.emit('form-payment-delivery: open');
+    events.emit('form-address-payment: open');
 });
 
 // Обработчик изменения состояния валидации формы адреса
-events.on('formErrorsFirst:change', (errors: Partial<IOrderForm>) => {
+events.on('formErrorsAddress:change', (errors: Partial<TFormAddress>) => {
     const { payment, address } = errors;
-    deliverypayment.valid = !payment && !address;
-    deliverypayment.errors = Object.values({ payment, address }).filter(i => !!i).join('; ');
+    addresspayment.valid = !payment && !address;
+    addresspayment.errors = Object.values({ payment, address }).filter(i => !!i).join('; ');
 });
 
 // Обработчик изменения данных формы адреса
@@ -130,9 +130,9 @@ events.on(/^order\..*:change/, (data: { field: keyof TFormAddress, value: string
 });
 
 // Обработчик открытия формы адреса
-events.on('form-payment-delivery: open', () => {
+events.on('form-address-payment: open', () => {
     modal.render({
-        content: deliverypayment.render({
+        content: addresspayment.render({
             payment: '',
             address: '',
             valid: false,
@@ -147,7 +147,7 @@ events.on('order:submit', () => {
 });
 
 // Обработчик изменения состояния валидации формы контактов
-events.on('formErrorsSecond:change', (errors: Partial<TFormContacts>) => {
+events.on('formErrorsContacts:change', (errors: Partial<TFormContacts>) => {
     const { email, phone } = errors;
     contacts.valid = !email && !phone;
     contacts.errors = Object.values({ phone, email }).filter(i => !!i).join('; ');

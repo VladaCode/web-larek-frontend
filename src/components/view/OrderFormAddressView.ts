@@ -24,6 +24,7 @@ export class OrderFormAddressView extends Form<TFormAddress> {
     }
 
     // Сеттер для установки активной кнопки оплаты
+    
     set buttonsРayment(name: string) {
         // Перебор всех кнопок и переключение класса активности
         this._buttonsРayment.forEach((buttonsРayment) => {
