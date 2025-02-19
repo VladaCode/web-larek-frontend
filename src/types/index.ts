@@ -66,7 +66,7 @@ export interface IProductBasketData {
   getProductListInBasketNumber(): number;  // получить количество товаров  для отображения на корзине
   addToBasket(): void; //добавить товар в корзину
   removeFromBasket(): void; //удалить товар из корзины
-  getTotalPrice(): number; // получить сумму заказа
+  //getTotalPrice(): number; // получить сумму заказа
   inBasket(): void; //проверить наличие товара в корзине 
   clearBasketData(): void; //очистить данные корзины после заказа
 }
