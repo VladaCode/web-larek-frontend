@@ -2,7 +2,7 @@ import { Model } from '../base/model';
 import { IOderFormsData, TFormAddress, TFormContacts, FormErrors } from '../../types/index';
 
 // Класс OrderForms расширяет базовую модель с типом данных IOderFormsData
-export class OrderForms extends Model<IOderFormsData> {
+export class OrderModel extends Model<IOderFormsData> {
     formErrors: FormErrors = {}; // Объект для хранения ошибок формы
     orderaddress: TFormAddress = {
         payment: '',  // Поле для способа оплаты

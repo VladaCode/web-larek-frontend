@@ -14,6 +14,9 @@ export class Modal extends Component<IModalData> {
     // Защищенное поле для содержимого модального окна
     protected _content: HTMLElement;
 
+    // Поле для хранения текущей позиции прокрутки
+    private scrollPosition: number;
+
     // Конструктор класса Modal
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container); // Вызов конструктора родительского класса
@@ -37,9 +40,11 @@ export class Modal extends Component<IModalData> {
 
     // Метод для открытия модального окна
     open() {
+        this.scrollPosition = window.scrollY; // Сохранение текущей позиции прокрутки
         this.container.classList.add('modal_active'); // Добавление класса для отображения модального окна
         document.addEventListener('keyup', this.handleEscUp); // Добавление обработчика события keyup
         this.events.emit('modal:open'); // Эмитирование события об открытии модального окна
+
     }
 
     // Метод для закрытия модального окна
@@ -47,7 +52,16 @@ export class Modal extends Component<IModalData> {
         this.container.classList.remove('modal_active'); // Удаление класса для скрытия модального окна
         document.removeEventListener('keyup', this.handleEscUp); // Удаление обработчика события keyup
         this.content = null; // Сброс содержимого модального окна
-        this.events.emit('modal:close'); // Эмитирование события о закрытии модального окна
+        this.events.emit('modal:close'); // Эмитирование события о закрытии модального окна 
+        
+          // Удалить фокус с любого сфокусированного элемента для предотвращения выделения
+        if (document.activeElement) {
+            (document.activeElement as HTMLElement).blur();
+        }
+
+        // Установка прокрутки обратно на сохраненную позицию
+        window.scrollTo(0, this.scrollPosition);
+
     }
    
     // Метод для обработки нажатий клавиш
@@ -55,6 +69,7 @@ export class Modal extends Component<IModalData> {
     // Проверка, была ли нажата клавиша "Escape"
     if (evt.key === 'Escape') {
         this.close(); // Закрытие модального окна, если клавиша "Escape" была нажата
+
     }
 }
 

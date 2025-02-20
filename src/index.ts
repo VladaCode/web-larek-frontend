@@ -1,8 +1,8 @@
 import './scss/styles.scss'; // Импортируем стили
 import { EventEmitter } from "./components/base/events"; // Импортируем EventEmitter для управления событиями
-import { ProductsData } from "./components/model/ProductsModel"; // Импортируем модель данных продуктов
-import { BasketData } from "./components/model/BasketModel"; // Импортируем модель данных корзины
-import { OrderForms } from "./components/model/OrderModel"; // Импортируем модель данных заказов
+import { ProductsModel } from "./components/model/ProductsModel"; // Импортируем модель данных продуктов
+import { BasketModel } from "./components/model/BasketModel"; // Импортируем модель данных корзины
+import { OrderModel } from "./components/model/OrderModel"; // Импортируем модель данных заказов
 import { IProduct, IProductsList, TProductBasket, IOrderForm, TFormAddress, TFormContacts } from './types'; // Импортируем типы данных
 import { API_URL, CDN_URL } from "./utils/constants"; // Импортируем константы для API
 import { APIweblarek } from "./components/APIweblarek"; // Импортируем класс для работы с API
@@ -21,66 +21,66 @@ const events = new EventEmitter();
 const api = new APIweblarek(CDN_URL, API_URL);
 
 // Получаем шаблоны для различных представлений
-const cardviewlistTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
-const cardviewpreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
-const cardviewbasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
-const basketviewTemplate = ensureElement<HTMLTemplateElement>('#basket');
-const delpayviewTemplate = ensureElement<HTMLTemplateElement>('#order');
-const contactsviewTemplate = ensureElement<HTMLTemplateElement>('#contacts');
-const success = ensureElement<HTMLTemplateElement>('#success');
+const productViewlistTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+const productViewpreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+const productViewbasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
+const basketViewTemplate = ensureElement<HTMLTemplateElement>('#basket');
+const addressViewTemplate = ensureElement<HTMLTemplateElement>('#order');
+const contactsViewTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 // Создаем экземпляры моделей данных
-const productsData = new ProductsData({}, events);
-const basketData = new BasketData({}, events);
-const orderForms = new OrderForms({}, events);
+const productsData = new ProductsModel({}, events);
+const basketData = new BasketModel({}, events);
+const orderForms = new OrderModel({}, events);
 
 // Создаем экземпляры представлений
-const mainpage = new MainPage(document.body, events);
+const page = new MainPage(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
-const basket = new BasketView(cloneTemplate(basketviewTemplate), events);
-const addresspayment  = new OrderFormAddressView(cloneTemplate(delpayviewTemplate), events);
-const contacts = new OrderFormContactsView(cloneTemplate(contactsviewTemplate), events);
-const successView = new Success(cloneTemplate(success), events);
+const basket = new BasketView(cloneTemplate(basketViewTemplate), events);
+const addresspayment  = new OrderFormAddressView(cloneTemplate(addressViewTemplate), events);
+const contacts = new OrderFormContactsView(cloneTemplate(contactsViewTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), events);
 
 // Обработчик события изменения списка продуктов
-events.on<IProductsList>('cards: changed', () => {
-    mainpage.catalog = productsData.getCardList().map(item => {
-        const card = new ProductViewList(cloneTemplate(cardviewlistTemplate), {
-            onClick: () => events.emit('card: selected', item)
+events.on<IProductsList>('products: changed', () => {
+    page.catalog = productsData.getProductList().map(item => {
+        const product = new ProductViewList(cloneTemplate(productViewlistTemplate), {
+            onClick: () => events.emit('product: selected', item)
         });
-        return card.render(item);
+        return product.render(item);
     });
 });
 
 // Обработчик события выбора продукта
-events.on('card: selected', (item: IProduct) => {
-    const cardpreview = new ProductViewPreview(cloneTemplate(cardviewpreviewTemplate), {
+events.on('product: selected', (item: IProduct) => {
+    const productpreview = new ProductViewPreview(cloneTemplate(productViewpreviewTemplate), {
         onClick: () => {
             if (basketData.inBasket(item.id)) {
                 basketData.removeFromBasket(item.id);
-                cardpreview.buttonChange = 'Купить';
+                productpreview.buttonChange = 'Купить';
             } else {
                 basketData.addToBasket(item);
-                cardpreview.buttonChange = 'Убрать';
+                productpreview.buttonChange = 'Убрать';
             }
-            mainpage.counter = basketData.getProductListInBasketNumber();
+            page.counter = basketData.getProductListInBasketNumber();
         },
     });
 
     if (item.price === null) {
-        cardpreview.disableButton(); // Отключаем кнопку, если цена null
+        productpreview.disableButton(); // Отключаем кнопку, если цена null
     } else {
-        cardpreview.buttonChange = basketData.inBasket(item.id) ? 'Убрать' : 'Купить';
+        productpreview.buttonChange = basketData.inBasket(item.id) ? 'Убрать' : 'Купить';
     }
 
-    modal.render({ content: cardpreview.render(item) });
+    modal.render({ content: productpreview.render(item) });
 });
 
 // Обработчик события открытия корзины
 events.on('basket: open', () => {
     const basketitems = basketData.items.map((item, index) => {
-        const basketitem = new ProductViewBasket(cloneTemplate(cardviewbasketTemplate), {
-            onClick: () => events.emit('basket: removecard', item)
+        const basketitem = new ProductViewBasket(cloneTemplate(productViewbasketTemplate), {
+            onClick: () => events.emit('basket: removeproduct', item)
         });
         basketitem.index = index + 1;
         return basketitem.render(item);
@@ -94,16 +94,16 @@ events.on('basket: open', () => {
 });
 
 // Обработчик события удаления продукта из корзины
-events.on('basket: removecard', (item: TProductBasket) => {
+events.on('basket: removeproduct', (item: TProductBasket) => {
     basketData.removeFromBasket(item.id);
     const basketitems = basketData.items.map((item, index) => {
-        const basketitem = new ProductViewBasket(cloneTemplate(cardviewbasketTemplate), {
-            onClick: () => events.emit('basket: removecard', item)
+        const basketitem = new ProductViewBasket(cloneTemplate(productViewbasketTemplate), {
+            onClick: () => events.emit('basket: removeproduct', item)
         });
         basketitem.index = index + 1;
         return basketitem.render(item);
     });
-    mainpage.counter = basketData.getProductListInBasketNumber();
+    page.counter = basketData.getProductListInBasketNumber();
     modal.render({
         content: basket.render({
             items: basketitems,
@@ -114,7 +114,7 @@ events.on('basket: removecard', (item: TProductBasket) => {
 
 // Обработчик события отправки корзины
 events.on('basket: submit', () => {
-    events.emit('form-address-payment: open');
+    events.emit('form-address: open');
 });
 
 // Обработчик изменения состояния валидации формы адреса
@@ -130,7 +130,7 @@ events.on(/^order\..*:change/, (data: { field: keyof TFormAddress, value: string
 });
 
 // Обработчик открытия формы адреса
-events.on('form-address-payment: open', () => {
+events.on('form-address: open', () => {
     modal.render({
         content: addresspayment.render({
             payment: '',
@@ -183,14 +183,14 @@ events.on('contacts:submit', () => {
     .then((res) => {
         events.emit('success:close', res);
         modal.render({
-            content: successView.render({
+            content: success.render({
                 content: res.total
             })
         });
         orderForms.clearFormAddress();
         orderForms.clearFormContacts();
         basketData.clearBasketData();
-        mainpage.counter = 0;
+        page.counter = 0;
     })
     .catch(console.error);
 });
@@ -202,12 +202,12 @@ events.on('success:close', () => {
 
 // Блокируем прокрутку страницы если открыта модалка
 events.on('modal:open', () => {
-    mainpage.locked = true;
+    page.locked = true;
 });
 
 // Разблокируем прокрутку страницы если модалка закрыта
 events.on('modal:close', () => {
-    mainpage.locked = false;
+    page.locked = false;
 });
 
 // Получаем список продуктов с API

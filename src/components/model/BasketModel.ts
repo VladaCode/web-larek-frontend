@@ -2,9 +2,11 @@ import { Model } from '../base/model';
 import { IProductBasketData, TProductBasket } from '../../types/index';
 
 // Определение класса BasketData, который наследует функциональность от Model
-export class BasketData extends Model<IProductBasketData> {
+export class BasketModel extends Model<IProductBasketData> {
     // Защищенное поле для хранения товаров в корзине
     protected _items: TProductBasket[] = []; // Инициализация пустого массива
+
+    
 
     // Сеттер для обновления списка товаров и эмитирования события изменения корзины
     set items(items: TProductBasket[]) {
@@ -43,7 +45,7 @@ export class BasketData extends Model<IProductBasketData> {
     }
 
     // Проверить, находится ли товар в корзине
-    inBasket(itemID: string) {
+    inBasket(itemID: string) :boolean {
         return this._items.some(item => item.id === itemID); // Возвращает true, если товар найден
     }
 

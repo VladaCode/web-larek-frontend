@@ -1,4 +1,4 @@
-// Базовый компонент (берем из учебного проекта Оно, используем при необходимости для VIEW)
+// Базовый компонент ( из учебного проекта Оно, используем при необходимости для VIEW)
 
 export abstract class Component<T> {
     protected constructor(protected readonly container: HTMLElement) {
