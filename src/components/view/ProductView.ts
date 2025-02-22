@@ -34,19 +34,19 @@ export class ProductViewBase extends Component<IProduct> {
 
 // Класс представления корзины продуктов, расширяющий ProductViewBase
 export class ProductViewBasket extends ProductViewBase {
-    protected buttonDelete?: HTMLButtonElement; // Защищенное свойство  для хранения кнопки удаления продукта
+    protected _buttonDelete?: HTMLButtonElement; // Защищенное свойство  для хранения кнопки удаления продукта
     protected _index: HTMLElement; // Защищенное свойство для хранения элемента индекса продукта
 
     // Конструктор класса ProductViewBasket, принимающий контейнер и действия, инициализирующий элементы кнопки удаления и индекса
     constructor(container: HTMLElement, actions?: IProductActions) {
         super(container); // Вызов конструктора родительского класса ProductViewBase
-        this.buttonDelete = container.querySelector('.basket__item-delete'); // Инициализация кнопки удаления
+        this._buttonDelete = container.querySelector('.basket__item-delete'); // Инициализация кнопки удаления
         this._index = container.querySelector('.basket__item-index'); // Инициализация элемента индекса продукта
 
         // Добавление обработчика клика для кнопки удаления или контейнера
         if (actions?.onClick) {
-            if (this.buttonDelete) {
-                this.buttonDelete.addEventListener('click', actions.onClick);
+            if (this._buttonDelete) {
+                this._buttonDelete.addEventListener('click', actions.onClick);
             } else {
                 container.addEventListener('click', actions.onClick);
             }
@@ -56,7 +56,7 @@ export class ProductViewBasket extends ProductViewBase {
     // Сеттер для установки текста индекса продукта
     set index(value: number) {
         // Установка текста индекса
-        this._index.textContent = value.toString();
+        this.setText(this._index, value.toString());
     }
 }
 
@@ -91,17 +91,13 @@ export class ProductViewList extends ProductViewBase {
 
     // Сеттер для установки текста категории продукта и добавления соответствующих классов
     set category(value: string) {
-        this._category.textContent = value; // Установка текста категории
-        const mapcategory = this._category.classList[0];// Получение текущего класса категории
-        this._category.className = ''; // Очистка всех классов категории
-        this._category.classList.add(`${mapcategory}`); // Добавление текущего класса категории
-        this._category.classList.add(`${mapcategory}${this.ProductCategoryType[value]}`); // Добавление нового класса категории
-    }
+        this.setText(this._category, value); // Установка текста категории
+        this.toggleClass(this._category, this.ProductCategoryType[value], true); // Добавление класса категории
+      };
 
     // Сеттер для установки источника и альтернативного текста изображения продукта
     set image(value: string) {
-        this._image.src = value; // Установка источника изображения
-        this._image.alt = this._title.textContent;   // Установка текста изображения
+        this.setImage(this._image, value); // Установка источника и текста изображения
     }
 }
 
@@ -141,17 +137,13 @@ export class ProductViewPreview extends ProductViewBase {
 
     // Сеттер для установки текста категории продукта и добавления соответствующих классов
     set category(value: string) {
-        this._category.textContent = value; // Установка текста категории
-        const mapcategory = this._category.classList[0]; // Получение текущего класса категории
-        this._category.className = ''; // Очистка всех классов категории
-        this._category.classList.add(`${mapcategory}`); // Добавление текущего класса категории
-        this._category.classList.add(`${mapcategory}${this.ProductCategoryType[value]}`); // Добавление нового класса категории из словаря
-    }
+        this.setText(this._category, value); // Установка текста категории
+        this.toggleClass(this._category, this.ProductCategoryType[value], true); // Добавление класса категории
+      };
 
     // Сеттер для установки источника и альтернативного текста изображения продукта
     set image(value: string) {
-        this._image.src = value; // Установка источника изображения
-        this._image.alt = this._title.textContent; // Установка альтернативного текста изображения
+        this.setImage(this._image, value); // Установка источника и текста изображения
     }
 
     // Сеттер для установки текста описания продукта

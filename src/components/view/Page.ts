@@ -46,13 +46,9 @@ export class MainPage extends Component<IMainPage> {
         this._catalog.replaceChildren(...items); // Замена детей элемента каталога новыми элементами
     }
 
-    // Сеттер для установки состояния блокировки страницы
-    set locked(value: boolean) {
-        if (value) {
-            this._wrapper.classList.add('page__wrapper_locked'); // Добавление класса блокировки
-        } else {
-            this._wrapper.classList.remove('page__wrapper_locked'); // Удаление класса блокировки
-        }
+     // Сеттер для установки состояния блокировки страницы
+     set locked(value: boolean) {
+        this.toggleClass(this._wrapper, 'page__wrapper_locked', value); // для установки и удаления класса блокировки
     }
 }
 

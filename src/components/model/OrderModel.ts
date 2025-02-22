@@ -4,31 +4,31 @@ import { IOderFormsData, TFormAddress, TFormContacts, FormErrors } from '../../t
 // Класс OrderForms расширяет базовую модель с типом данных IOderFormsData
 export class OrderModel extends Model<IOderFormsData> {
     formErrors: FormErrors = {}; // Объект для хранения ошибок формы
-    orderaddress: TFormAddress = {
+    orderAddress: TFormAddress = {
         payment: '',  // Поле для способа оплаты
         address: ''   // Поле для адреса доставки
     };
-    ordercontacts: TFormContacts = {
+    orderContacts: TFormContacts = {
         email: '',    // Поле для email
         phone: ''     // Поле для телефона
     };
 
     // Метод для установки значений в форму адреса
     setFormAddress(field: keyof TFormAddress, value: string) {
-        this.orderaddress[field] = value; // Устанавливаем значение поля
+        this.orderAddress[field] = value; // Устанавливаем значение поля
 
         if (this.validateFormAddress()) { // Проверяем валидность формы
-            this.events.emit('orderaddress:ready', this.orderaddress); // Если валидно, эмитируем событие
+            this.events.emit('orderaddress:ready', this.orderAddress); // Если валидно, эмитируем событие
         }
     }
 
     // Метод для валидации формы адреса
     validateFormAddress() {
         const errors: typeof this.formErrors = {};
-        if (!this.orderaddress.payment) {
+        if (!this.orderAddress.payment) {
             errors.payment = 'Необходимо указать способ оплаты'; // Проверка наличия способа оплаты
         }
-        if (!this.orderaddress.address) {
+        if (!this.orderAddress.address) {
             errors.address = 'Необходимо указать адресс доставки'; // Проверка наличия адреса доставки
         }
         this.formErrors = errors; // Сохраняем ошибки в formErrors
@@ -38,20 +38,20 @@ export class OrderModel extends Model<IOderFormsData> {
 
     // Метод для установки значений в форму контактов
     setFormContacts(field: keyof TFormContacts, value: string) {
-        this.ordercontacts[field] = value; // Устанавливаем значение поля
+        this.orderContacts[field] = value; // Устанавливаем значение поля
 
         if (this.validateFormContacts()) { // Проверяем валидность формы
-            this.events.emit('ordercontacts:ready', this.ordercontacts); // Если валидно, эмитируем событие
+            this.events.emit('ordercontacts:ready', this.orderContacts); // Если валидно, эмитируем событие
         }
     }
 
     // Метод для валидации формы контактов
     validateFormContacts() {
         const errors: typeof this.formErrors = {};
-        if (!this.ordercontacts.email) {
+        if (!this.orderContacts.email) {
             errors.email = 'Необходимо указать email'; // Проверка наличия email
         }
-        if (!this.ordercontacts.phone) {
+        if (!this.orderContacts.phone) {
             errors.phone = 'Необходимо указать телефон'; // Проверка наличия телефона
         }
         this.formErrors = errors; // Сохраняем ошибки в formErrors
@@ -61,7 +61,7 @@ export class OrderModel extends Model<IOderFormsData> {
 
     // Метод для очистки формы адреса
     clearFormAddress() {
-        this.orderaddress = {
+        this.orderAddress = {
             payment: '', // Сбрасываем поле способа оплаты
             address: ''  // Сбрасываем поле адреса доставки
         };
@@ -69,7 +69,7 @@ export class OrderModel extends Model<IOderFormsData> {
 
     // Метод для очистки формы контактов
     clearFormContacts() {
-        this.ordercontacts = {
+        this.orderContacts = {
             email: '', // Сбрасываем поле email
             phone: ''  // Сбрасываем поле телефона
         };

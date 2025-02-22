@@ -66,9 +66,4 @@ export class BasketView extends Component<IBasketView> {
         }
     }
 
-    // Метод для обновления индексов товаров в корзине
-    getnewindexlist() {
-        Array.from(this._productListBasket.children).forEach((item, index) =>
-            (item.querySelector(`.basket__item-index`)!.textContent = (index + 1).toString())); // Установка индекса для каждого товара
-    }
 }

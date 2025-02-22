@@ -38,7 +38,7 @@ const orderForms = new OrderModel({}, events);
 const page = new MainPage(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new BasketView(cloneTemplate(basketViewTemplate), events);
-const addresspayment  = new OrderFormAddressView(cloneTemplate(addressViewTemplate), events);
+const addressPayment  = new OrderFormAddressView(cloneTemplate(addressViewTemplate), events);
 const contacts = new OrderFormContactsView(cloneTemplate(contactsViewTemplate), events);
 const success = new Success(cloneTemplate(successTemplate), events);
 
@@ -76,8 +76,8 @@ events.on('product: selected', (item: IProduct) => {
     modal.render({ content: productpreview.render(item) });
 });
 
-// Обработчик события открытия корзины
-events.on('basket: open', () => {
+// Метод для рендеринга элементов корзины
+const renderBasketItems = () => {
     const basketitems = basketData.items.map((item, index) => {
         const basketitem = new ProductViewBasket(cloneTemplate(productViewbasketTemplate), {
             onClick: () => events.emit('basket: removeproduct', item)
@@ -85,9 +85,14 @@ events.on('basket: open', () => {
         basketitem.index = index + 1;
         return basketitem.render(item);
     });
+    return basketitems;
+};
+
+// Обработчик события открытия корзины
+events.on('basket: open', () => {
     modal.render({
         content: basket.render({
-            items: basketitems,
+            items: renderBasketItems(), // Используем новый метод
             total: basketData.getTotalPrice(),
         })
     });
@@ -96,17 +101,10 @@ events.on('basket: open', () => {
 // Обработчик события удаления продукта из корзины
 events.on('basket: removeproduct', (item: TProductBasket) => {
     basketData.removeFromBasket(item.id);
-    const basketitems = basketData.items.map((item, index) => {
-        const basketitem = new ProductViewBasket(cloneTemplate(productViewbasketTemplate), {
-            onClick: () => events.emit('basket: removeproduct', item)
-        });
-        basketitem.index = index + 1;
-        return basketitem.render(item);
-    });
     page.counter = basketData.getProductListInBasketNumber();
     modal.render({
         content: basket.render({
-            items: basketitems,
+            items: renderBasketItems(), // Используем новый метод
             total: basketData.getTotalPrice(),
         })
     });
@@ -117,11 +115,12 @@ events.on('basket: submit', () => {
     events.emit('form-address: open');
 });
 
+
 // Обработчик изменения состояния валидации формы адреса
 events.on('formErrorsAddress:change', (errors: Partial<TFormAddress>) => {
     const { payment, address } = errors;
-    addresspayment.valid = !payment && !address;
-    addresspayment.errors = Object.values({ payment, address }).filter(i => !!i).join('; ');
+    addressPayment.valid = !payment && !address;
+    addressPayment.errors = Object.values({ payment, address }).filter(i => !!i).join('; ');
 });
 
 // Обработчик изменения данных формы адреса
@@ -132,7 +131,7 @@ events.on(/^order\..*:change/, (data: { field: keyof TFormAddress, value: string
 // Обработчик открытия формы адреса
 events.on('form-address: open', () => {
     modal.render({
-        content: addresspayment.render({
+        content: addressPayment.render({
             payment: '',
             address: '',
             valid: false,
@@ -173,15 +172,14 @@ events.on('form-contacts: open', () => {
 // Обработчик отправки формы контактов
 events.on('contacts:submit', () => {
     api.postOrderProductsApi({
-        payment: orderForms.orderaddress.payment,
-        address: orderForms.orderaddress.address,
-        email: orderForms.ordercontacts.email,
-        phone: orderForms.ordercontacts.phone,
+        payment: orderForms.orderAddress.payment,
+        address: orderForms.orderAddress.address,
+        email: orderForms.orderContacts.email,
+        phone: orderForms.orderContacts.phone,
         total: basketData.getTotalPrice(),
         items: basketData.getProductListInBasket(),
     })
     .then((res) => {
-        events.emit('success:close', res);
         modal.render({
             content: success.render({
                 content: res.total
